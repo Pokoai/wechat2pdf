@@ -28,7 +28,8 @@ PDF_OPTIONS = {
 }
 
 # requests 下载网页
-url = 'https://mp.weixin.qq.com/s/MOOZeVzTjZcRZlX7cuSZmw?'
+# url = 'https://mp.weixin.qq.com/s/MOOZeVzTjZcRZlX7cuSZmw?'
+url = 'https://mp.weixin.qq.com/s?__biz=MzIwMTIzNDMwNA==&mid=2653411261&idx=1&sn=8110b3c144780529e147ed068d57a466&chksm=8d227552ba55fc44cf78aa569d3de8e228bcfaefe75b8a380daaefab0087cb41d83f7d6b6f28&scene=178&cur_album_id=2461687967875416065#rd'
 res = requests.get(url)
 res.raise_for_status()
 # with open('./temp.txt', 'wb') as f:
