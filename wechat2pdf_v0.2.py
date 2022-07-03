@@ -86,10 +86,10 @@ def get_all_links(url):
     """
     link_list = []
 
-    res = requests.post(url)
+    res = requests.get(url)
     res.raise_for_status()
-    with open('./temp.txt', 'w') as f:
-        f.write(res.text)
+    # with open('./temp.txt', 'w') as f:
+    #     f.write(res.text)
     soup = bs4.BeautifulSoup(res.text)
     linkElems = soup.select('li')
     # album__list-item js_album_item js_wx_tap_highlight wx_tap_cell
@@ -209,7 +209,7 @@ def wechat2pdf(url, category, dir_path="D:\Media\Desktop\wechat2pdf"):
     """
     os.makedirs(output_dir_path, exist_ok=True)
 
-    link_list = get_all_links()
+    link_list = get_all_links(url)
     title_num = len(link_list)  # 文章数量
 
     for link in link_list:
@@ -243,7 +243,7 @@ def wechat2pdf(url, category, dir_path="D:\Media\Desktop\wechat2pdf"):
 
 if __name__ == "__main__":
     # url：合集链接
-    url = 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIzNTQ4ODg4OA==&action=getalbum&album_id=1689138318304690182&scene=173&from_msgid=2247487438&from_itemidx=1&count=3&nolastread=1#wechat_redirect'
+    url = 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIzNTQ4ODg4OA==&action=getalbum&album_id=2206783352551063553&scene=173&from_msgid=2247487451&from_itemidx=1&count=3&nolastread=1#wechat_redirect'
     category = '孟岩投资实证2021'  # 类别，根据类别自动创建子文件夹
     dir_path = "D:\Media\Desktop\wechat2pdf"  # 主文件夹路径
     wechat2pdf(url, category, dir_path)
