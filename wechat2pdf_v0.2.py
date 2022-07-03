@@ -2,6 +2,12 @@
 # wechat2pdf.py - 将微信公众号合集文章批量导出为pdf文档
 
 """
+最新问题：
+1. 合集页面的文章列表html是动态显示的，打开网页后只会显示前10条，
+只有混动滚轮往下翻才会触发显示更多条信息。
+所以目前采用的方法仅能爬取10条记录。
+
+
 初步版本：
 合集链接手动提供
 
@@ -73,20 +79,23 @@ def timestamp_convert_localdate(timestamp, time_format="%Y-%m-%d"):
 
 
 # 获取合集内所有文章链接
+# 有问题：只能爬取前10篇文章链接
 def get_all_links(url):
     """
     url为合集链接
     """
     link_list = []
 
-    res = requests.get(url)
+    res = requests.post(url)
     res.raise_for_status()
+    with open('./temp.txt', 'w') as f:
+        f.write(res.text)
     soup = bs4.BeautifulSoup(res.text)
     linkElems = soup.select('li')
     # album__list-item js_album_item js_wx_tap_highlight wx_tap_cell
     for i in range(len(linkElems)):
         link_list.append(linkElems[i].get('data-link'))
-
+    # print(len(linkElems))
     return link_list
 
 
@@ -114,6 +123,7 @@ def replace_html_tags(html):
 
 # 获取文章标题
 # 需要借助爬虫提取文章标题
+# 可以改进：无需每篇文章单独爬取，可以一次性获取的
 def get_title(res):
     soup = bs4.BeautifulSoup(res.text)
 
@@ -199,7 +209,7 @@ def wechat2pdf(url, category, dir_path="D:\Media\Desktop\wechat2pdf"):
     """
     os.makedirs(output_dir_path, exist_ok=True)
 
-    link_list = get_all_links(url)
+    link_list = get_all_links()
     title_num = len(link_list)  # 文章数量
 
     for link in link_list:
@@ -233,8 +243,8 @@ def wechat2pdf(url, category, dir_path="D:\Media\Desktop\wechat2pdf"):
 
 if __name__ == "__main__":
     # url：合集链接
-    url = 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIwMTIzNDMwNA==&action=getalbum&album_id=2467166481575985152&scene=173&from_msgid=2653411345&from_itemidx=1&count=3&nolastread=1#wechat_redirect'
-    category = 'E大发车'  # 类别，根据类别自动创建子文件夹
+    url = 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIzNTQ4ODg4OA==&action=getalbum&album_id=1689138318304690182&scene=173&from_msgid=2247487438&from_itemidx=1&count=3&nolastread=1#wechat_redirect'
+    category = '孟岩投资实证2021'  # 类别，根据类别自动创建子文件夹
     dir_path = "D:\Media\Desktop\wechat2pdf"  # 主文件夹路径
     wechat2pdf(url, category, dir_path)
 
