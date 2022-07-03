@@ -1,5 +1,5 @@
 #! python
-# wechat2pdf.py - 将微信公众号合集文章批量导出为pdf文档
+# wechat2pdf_v0.2.py - 将微信公众号合集文章批量导出为pdf文档
 
 """
 最新问题：
