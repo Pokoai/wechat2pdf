@@ -1,5 +1,5 @@
 #! python
-# find_all_links.py - 通过合集链接找到该合集下所有文章的链接、标题等信息
+# find_all_links.py - 通过合集链接找到该合集下所有文章的ID、标题、链接、序列号、发布时间等信息
 
 """
 功能基本实现 2022-7-4
@@ -67,12 +67,13 @@ def get_first_msg_info(album_url, output_dir_path):
 
 
 # 设置requests.get()的参数params
-# 目前仅自动获取first_id, 其他参数手动提供，后续改进为全部自动获取
-def set_params(first_id):
+# first_id：合集主页爬取所得
+# album_id：提取自手动提供的合集链接中
+def set_params(first_id, album_id):
     params = {
         'action': 'getalbum',
         '_biz': 'MzIzNTQ4ODg4OA==',
-        'album_id': '2206783352551063553',
+        'album_id': album_id,
         'count': '20',
         'begin_msgid': str(first_id),
         'begin_itemidx': '1',
@@ -92,7 +93,7 @@ def set_params(first_id):
 
 # 获取合集内所有文章标题、链接、发布时间、ID等信息
 # requests.get(url=url, headers=headers, params=params)的响应信息不包含第一篇文章，所有需要单独爬取
-def get_all_info(album_url, output_dir_path):
+def get_all_info(album_url, album_id, output_dir_path):
     """
     album_url：合集链接
     output_dir_path：存储文章信息的文件所在文件夹
@@ -108,7 +109,7 @@ def get_all_info(album_url, output_dir_path):
 
     msg_cnt = 0  # 记录爬取到的文章数量
     while True:
-        params = set_params(first_id)
+        params = set_params(first_id, album_id)
         data_json = requests.get(url=url, headers=headers, params=params).json()
         # 解析返回的json数据
         album_resp = data_json.get('getalbum_resp')
@@ -134,10 +135,10 @@ def get_all_info(album_url, output_dir_path):
     return file_path
 
 
-
 if __name__ == "__main__":
     album_url = 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIzNTQ4ODg4OA==&action=getalbum&album_id=2206783352551063553&scene=173&from_msgid=2247487451&from_itemidx=1&count=3&nolastread=1#wechat_redirect'
     output_dir_path = "D:\Media\Desktop\wechat2pdf"  # 主文件夹路径
-    get_all_info(album_url, output_dir_path)
+    album_id = 2206783352551063553
+    get_all_info(album_url, album_id, output_dir_path)
 
     print("Done!")
