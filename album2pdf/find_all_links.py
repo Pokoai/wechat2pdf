@@ -102,15 +102,13 @@ def set_params(first_id, album_id, _biz):
     return params
 
 
-# 获取合集内所有文章标题、链接、发布时间、ID等信息
+# 获取合集内除第一篇文章外，其他文章的标题、链接、发布时间、ID等信息
 # requests.get(url=url, headers=headers, params=params)的响应信息不包含第一篇文章，所有需要单独爬取
-def get_all_info(album_url, album_id, output_dir_path):
+def get_rest_info(first_id, file_path, album_num, _biz, album_id):
     """
     album_url：合集链接
     output_dir_path：存储文章信息的文件所在文件夹
     """
-    # 先将第一篇文章信息写入文件中，并获得其id和合集名称
-    first_id, file_path, album_num, _biz = get_first_msg_info(album_url, output_dir_path)
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36'
@@ -155,6 +153,16 @@ def get_all_info(album_url, album_id, output_dir_path):
         # 每次响应最多只返回20篇文章的信息，所以要找到本次响应的最后一篇文章，以它的id作为下一次起始id
         first_id = article_list[msg_cnt-1]['msgid']  # 更新first_id
         msg_cnt = 0  # msg_cnt需要清零，为下次循环准备
+
+
+def get_all_info(album_url, album_id, output_dir_path):
+    # 先将第一篇文章信息写入文件中
+    first_id, file_path, album_num, _biz = get_first_msg_info(album_url, output_dir_path)
+    # 如果只有一篇文章，则不用执行get_rest_info
+    if album_num > 1:
+        get_rest_info(first_id, file_path, album_num, _biz, album_id)
+    else:
+        pass
 
     return file_path
 
