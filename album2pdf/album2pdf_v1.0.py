@@ -201,13 +201,14 @@ def wechat2pdf(album_url, output_dir_path="D:\Media\Desktop\wechat2pdf"):
 
 
 if __name__ == "__main__":
-    album_url = input("请输入合集链接（不带双引号）：")
-    output_dir_path = input("请输入主文件夹路径（不带双引号）：")
-    # album_url = 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIzNTQ4ODg4OA==&action=getalbum&album_id=2206783352551063553&scene=173&from_msgid=2247487451&from_itemidx=1&count=3&nolastread=1#wechat_redirect'
-    # output_dir_path = "D:\Media\Desktop\wechat2pdf"  # 主文件夹路径
+    # album_url = input("请输入合集链接（不带双引号）：")
+    # output_dir_path = input("请输入主文件夹路径（不带双引号）：")
+    album_url = 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIwMTIzNDMwNA==&action=getalbum&album_id=2467166481575985152&scene=173&from_msgid=2653411345&from_itemidx=1&count=3&nolastread=1#wechat_redirect'
+    output_dir_path = "D:\Media\Desktop\wechat2pdf"  # 主文件夹路径
 
     # 通过链接提取合集id
     album_id = re.search(r'album_id=(\d+)&', album_url).group(1)
+    print(f'\nalbum_id：{album_id}\n')
 
     wechat2pdf(album_url, output_dir_path)
 
