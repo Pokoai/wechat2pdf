@@ -1,5 +1,5 @@
 #! python
-# wechat2pdf.py - 将微信公众号文章导出为pdf文档
+# wechat2pdf.py - 微信公众号单篇文章转换为pdf文档
 
 """
 初步版本：
