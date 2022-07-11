@@ -155,7 +155,7 @@ def wechat2pdf(album_url, output_dir_path="D:\Media\Desktop\wechat2pdf"):
     album_url：微信公众号合集链接
     dir_path：主文件夹，有默认值
     """
-    start_time = time.time()
+    # start_time = time.time()
 
     # 通知合集文章更新状态
     # notice_new_title(title_num, output_dir_path)
@@ -199,10 +199,10 @@ def wechat2pdf(album_url, output_dir_path="D:\Media\Desktop\wechat2pdf"):
             pass
         print_info(title, msg_path2)
 
-    end_time = time.time()
-    all_time = int(end_time - start_time)
-    print(f"\n本次共生成 {msg_num} 篇文章！")
-    print(f"耗时：{all_time}秒")
+    # end_time = time.time()
+    # all_time = int(end_time - start_time)
+    # print(f"\n本次共生成 {msg_num} 篇文章！")
+    # print(f"耗时：{all_time}秒")
 
 
 if __name__ == "__main__":
