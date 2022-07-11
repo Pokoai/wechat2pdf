@@ -38,16 +38,25 @@ def get_first_msg_info(album_url, output_dir_path):
 
     # 获取第一篇文章信息
     first_elem = soup.select('li')[0]
+
     first_id = first_elem.get('data-msgid')
-    print(f'\nfirst_id：{first_id}\n')
+    # print(f'\nfirst_id：{first_id}\n')
+
     pos_num = first_elem.get('data-pos_num')
     if pos_num == '':
         pos_num = str(album_num)  # 有的合集文章没有设置pos_num属性
+
     title = first_elem.get('data-title')
+
     link = first_elem.get('data-link')
-    # 从link里提取_biz
+
+    # 从第一篇文章的 link 里提取出 _biz， 供 set_params 使用
     _biz = re.search(r'__biz=(\S+)&mid', link).group(1)
-    print(f'_biz：{_biz}')
+    # print(f'_biz：{_biz}')
+
+    # 从 album_url 中提取出 album_id，供 set_params 使用
+    album_id = re.search(r'album_id=(\d+)&', album_url).group(1)
+    # print(f'\nalbum_id：{album_id}\n')
 
     # 获取第一篇文章发布时间
     # 发布时间是用 JavaScript 渲染后显示的，要用正则表达式截取时间戳
@@ -59,12 +68,12 @@ def get_first_msg_info(album_url, output_dir_path):
     if match:
         publish_time = int(match.group(1).split('"')[1])
 
-    # 根据合集名称确定路径
+    # 根据合集名称确定输出路径
     album_path = os.path.join(output_dir_path, album_name)  # 合集文件夹路径
     os.makedirs(album_path, exist_ok=True)
     file_path = os.path.join(album_path, 'data.txt')  # data.txt路径
 
-    # 写入第一篇文章的信息
+    # 向数据库文件 data.txt 写入第一篇文章的信息
     with open(file_path, 'w', encoding='utf-8') as f:
         # f.write(f'公众号名称：{wechat_name}\n合集名称：{album_name}\n合集本地路径：{album_path}\n\n'
         #         f'序列：{pos_num}\n文章标题：{title}\n发布时间：{publish_time}\n'
@@ -73,7 +82,7 @@ def get_first_msg_info(album_url, output_dir_path):
         f.write(f'序列：{pos_num}\n文章标题：{title}\n发布时间：{publish_time}\n'
                 f'链接：{link}\nID：{first_id}\n\n')
 
-    return first_id, file_path, album_num, _biz
+    return first_id, file_path, album_num, _biz, album_id
 
 
 # 设置requests.get()的参数params
@@ -155,11 +164,13 @@ def get_rest_info(first_id, file_path, album_num, _biz, album_id):
         msg_cnt = 0  # msg_cnt需要清零，为下次循环准备
 
 
-def get_all_info(album_url, album_id, output_dir_path):
-    # 先将第一篇文章信息写入文件中
-    first_id, file_path, album_num, _biz = get_first_msg_info(album_url, output_dir_path)
+def get_all_info(album_url, output_dir_path):
+    # 先将第一篇文章信息写入数据库文件 data.txt 中
+    first_id, file_path, album_num, _biz, album_id = get_first_msg_info(album_url, output_dir_path)
+
     # 如果只有一篇文章，则不用执行get_rest_info
     if album_num > 1:
+        # 再将剩余文章信息写入数据库文件 data.txt 中
         get_rest_info(first_id, file_path, album_num, _biz, album_id)
     else:
         pass
@@ -168,11 +179,9 @@ def get_all_info(album_url, album_id, output_dir_path):
 
 
 if __name__ == "__main__":
-    # album_url = 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIzNTQ4ODg4OA==&action=getalbum&album_id=2206783352551063553&scene=173&from_msgid=2247487451&from_itemidx=1&count=3&nolastread=1#wechat_redirect'
     album_url = 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIzNTQ4ODg4OA==&action=getalbum&album_id=1323674556309241856&scene=173&from_msgid=2247485047&from_itemidx=1&count=3&nolastread=1#wechat_redirect'
-
     output_dir_path = "D:\Media\Desktop\wechat2pdf"  # 主文件夹路径
-    album_id = 2206783352551063553
-    get_all_info(album_url, album_id, output_dir_path)
 
-    print("Done!")
+    get_all_info(album_url, output_dir_path)
+
+    # print("Done!")
