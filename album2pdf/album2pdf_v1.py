@@ -1,5 +1,5 @@
 #! python
-# album2pdf_v1.0.py - 将微信公众号合集文章批量导出为pdf文档
+# album2pdf_v1.py - 将微信公众号合集文章批量导出为pdf文档
 
 """
 初步版本：
@@ -80,15 +80,20 @@ def timestamp_convert_localdate(timestamp, time_format="%Y-%m-%d"):
 def replace_html_tags(html):
     # 替换图片标签属性
     # 这种替换方式太过耗时，后续改进可考虑换其他方式
+    # data-src替换为src 有时候返回的正文被隐藏了，将hidden去掉
     html = html.replace(
         "data-src", "src").replace('style="visibility: hidden;"', "")
+    # soup = bs4.BeautifulSoup(html)
+    # # 选择正文（去除javascript等）
+    # html = soup.select('div#img-content')[0]
+
 
     # soup = bs4.BeautifulSoup(html, 'html.parser')
     #
     # # 删除评论和投票的html标签
     # if soup.iframe:
     #     soup.iframe.decompose()
-    #
+
     # # 用模板格式化
     # comments = soup.findAll("img", {"class": "like_comment_pic"})
     # styles = soup.find_all('style')
@@ -186,10 +191,10 @@ def wechat2pdf(album_url, output_dir_path="D:\Media\Desktop\wechat2pdf"):
         cnt_html = replace_html_tags(res.text)
 
         # 利用pdfkit开始生成pdf文档
-        # pdfkit.from_url(link_list[i], msg_path)  # 无图片版
-        # print_info(title, msg_path)
+        pdfkit.from_url(link_list[i], msg_path)  # 无图片版
+        print_info(title, msg_path)
         try:
-            pdfkit.from_string(cnt_html, msg_path)  # 有图片版
+            pdfkit.from_string(cnt_html, msg_path2, options=PDF_OPTIONS)  # 有图片版
         except IOError:
             pass
         print_info(title, msg_path2)
@@ -204,7 +209,7 @@ if __name__ == "__main__":
     album_url = input("请输入合集链接（不带双引号）：")
     # output_dir_path = input("请输入主文件夹路径（不带双引号）：")
     # album_url = 'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIzNTQ4ODg4OA==&action=getalbum&album_id=1511849982641913857&scene=173&from_msgid=2247485557&from_itemidx=1&count=3&nolastread=1#wechat_redirect'
-    output_dir_path = "D:\Media\Desktop\wechat2pdf"  # 主文件夹路径
+    output_dir_path = "D:\Media\Desktop\wechat2pdf2"  # 主文件夹路径
 
     # 通过链接提取合集id
     album_id = re.search(r'album_id=(\d+)&', album_url).group(1)
