@@ -85,6 +85,7 @@ def get_first_msg_info(album_url, output_dir_path):
     return first_id, file_path, album_num, _biz, album_id
 
 
+
 # 设置requests.get()的参数params
 # first_id：首篇文章id，合集主页爬取所得
 # album_id：合集id，提取自手动提供的合集链接中
@@ -164,6 +165,11 @@ def get_rest_info(first_id, file_path, album_num, _biz, album_id):
         msg_cnt = 0  # msg_cnt需要清零，为下次循环准备
 
 
+# 最新想法（2022-7-12）：不从这里入手去实现增量更新，因为从这里入手的话，新的data.txt会覆盖掉旧的，
+# 那么data.txt里面就一篇文章信息，不符合数据库文件的性质
+# 现在想到一个新思路：从 wechat2pdf()最终转化pdf的函数去入手，提供一个新版本，每天只下载第一个链接的文章
+
+# 第一次运行时采用该版本，爬取所有文章
 def get_all_info(album_url, output_dir_path):
     # 先将第一篇文章信息写入数据库文件 data.txt 中
     first_id, file_path, album_num, _biz, album_id = get_first_msg_info(album_url, output_dir_path)
@@ -176,6 +182,19 @@ def get_all_info(album_url, output_dir_path):
         pass
 
     return file_path
+
+
+# 最新想法（2022-7-12）：不从这里入手去实现增量更新，因为从这里入手的话，新的data.txt会覆盖掉旧的，
+# 那么data.txt里面就一篇文章信息，不符合数据库文件的性质
+# 现在想到一个新思路：从 wechat2pdf()最终转化pdf的函数去入手，提供一个新版本，每天只下载第一个链接的文章
+
+# 后续每天运行时采用该版本，仅爬取最新一篇文章
+# 目前程序组织很简单，没有软件工程的思想，能自己用起来就行。以后再考虑重构。
+# def get_all_info(album_url, output_dir_path):
+#     # 先将第一篇文章信息写入数据库文件 data.txt 中
+#     first_id, file_path, album_num, _biz, album_id = get_first_msg_info(album_url, output_dir_path)
+#
+#     return file_path
 
 
 if __name__ == "__main__":
