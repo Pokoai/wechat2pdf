@@ -149,7 +149,63 @@ def notice_new_title(title_num, output_dir_path):
         f.seek(0)
 
 
-# 生成pdf
+# 根据数据库文件 data.txt 中提供的 所有链接，生成pdf
+# def wechat2pdf(album_url, output_dir_path="D:\Media\Desktop\wechat2pdf"):
+#     """
+#     album_url：微信公众号合集链接
+#     dir_path：主文件夹，有默认值
+#     """
+#     # start_time = time.time()
+#
+#     # 通知合集文章更新状态
+#     # notice_new_title(title_num, output_dir_path)
+#
+#     file_str= ''
+#     file_path = get_all_info(album_url, output_dir_path)
+#     # file_path = "D:\Media\Desktop\wechat2pdf\孟岩投资实证（2022）\data.txt"
+#     album_path = os.path.dirname(file_path)
+#     with open(file_path, encoding='utf-8') as f:
+#         file_str = f.read()
+#
+#     # 匹配序列号
+#     pos_num_list = re.findall(r'序列：(\d+)\s', file_str)
+#     # 匹配标题
+#     title_list = re.findall(r'文章标题：(.+)\s', file_str)
+#     # 匹配发布时间
+#     publish_time_list = re.findall(r'发布时间：(\d+)\s', file_str)
+#     # 匹配链接
+#     link_list = re.findall(r'链接：(\S+)\s', file_str)
+#
+#     msg_num = len(link_list)  # 文章数量
+#     for i in range(msg_num):
+#         # 设置文章路径
+#         publish_time = timestamp_convert_localdate(int(publish_time_list[i]))
+#         title = pos_num_list[i] + '.' + title_list[i] + '-' + publish_time
+#         msg_path = os.path.join(album_path, title + '.pdf')
+#         msg_path2 = os.path.join(album_path, title + '(img).pdf')  # 带图片
+#
+#         # requests加载文章
+#         res = requests.get(link_list[i])
+#         res.raise_for_status()
+#         # 转换html
+#         cnt_html = replace_html_tags(res.text)
+#
+#         # 利用pdfkit开始生成pdf文档
+#         pdfkit.from_url(link_list[i], msg_path)  # 无图片版
+#         print_info(title, msg_path)
+#         try:
+#             pdfkit.from_string(cnt_html, msg_path2, options=PDF_OPTIONS)  # 有图片版
+#         except IOError:
+#             pass
+#         print_info(title, msg_path2)
+#
+#     # end_time = time.time()
+#     # all_time = int(end_time - start_time)
+#     # print(f"\n本次共生成 {msg_num} 篇文章！")
+#     # print(f"耗时：{all_time}秒")
+
+
+# 根据数据库文件 data.txt 中提供的 第一个链接，生成pdf
 def wechat2pdf(album_url, output_dir_path="D:\Media\Desktop\wechat2pdf"):
     """
     album_url：微信公众号合集链接
@@ -177,32 +233,27 @@ def wechat2pdf(album_url, output_dir_path="D:\Media\Desktop\wechat2pdf"):
     link_list = re.findall(r'链接：(\S+)\s', file_str)
 
     msg_num = len(link_list)  # 文章数量
-    for i in range(msg_num):
-        # 设置文章路径
-        publish_time = timestamp_convert_localdate(int(publish_time_list[i]))
-        title = pos_num_list[i] + '.' + title_list[i] + '-' + publish_time
-        msg_path = os.path.join(album_path, title + '.pdf')
-        msg_path2 = os.path.join(album_path, title + '(img).pdf')  # 带图片
 
-        # requests加载文章
-        res = requests.get(link_list[i])
-        res.raise_for_status()
-        # 转换html
-        cnt_html = replace_html_tags(res.text)
+    # 设置文章路径
+    publish_time = timestamp_convert_localdate(int(publish_time_list[0]))
+    title = pos_num_list[0] + '.' + title_list[0] + '-' + publish_time
+    msg_path = os.path.join(album_path, title + '.pdf')
+    msg_path2 = os.path.join(album_path, title + '(img).pdf')  # 带图片
 
-        # 利用pdfkit开始生成pdf文档
-        pdfkit.from_url(link_list[i], msg_path)  # 无图片版
-        print_info(title, msg_path)
-        try:
-            pdfkit.from_string(cnt_html, msg_path2, options=PDF_OPTIONS)  # 有图片版
-        except IOError:
-            pass
-        print_info(title, msg_path2)
+    # requests加载文章
+    res = requests.get(link_list[0])
+    res.raise_for_status()
+    # 转换html
+    cnt_html = replace_html_tags(res.text)
 
-    # end_time = time.time()
-    # all_time = int(end_time - start_time)
-    # print(f"\n本次共生成 {msg_num} 篇文章！")
-    # print(f"耗时：{all_time}秒")
+    # 利用pdfkit开始生成pdf文档
+    pdfkit.from_url(link_list[0], msg_path)  # 无图片版
+    print_info(title, msg_path)
+    try:
+        pdfkit.from_string(cnt_html, msg_path2, options=PDF_OPTIONS)  # 有图片版
+    except IOError:
+        pass
+    print_info(title, msg_path2)
 
 
 if __name__ == "__main__":
