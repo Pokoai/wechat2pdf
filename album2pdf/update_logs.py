@@ -113,7 +113,7 @@ def update_logs(logs, logs_path):
         f.write('\n' + old)
 
     # return update_flg, update_cnt  # 将更新标志位、更新总数继续传递下去
-    print("\n################## 日志 update_logs 更新完成 ##################\n")
+    print("\n##################### 日志文件 更新完成 #####################")
 
 
 

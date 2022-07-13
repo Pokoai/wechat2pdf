@@ -21,16 +21,17 @@ album_name_list = list(album_url_dict.keys())
 # 最外层文件夹地址
 output_dir_path = "D:\Media\Desktop\wechat2pdf"
 # 日志路径
-logs_path = os.path.join(output_dir_path, 'update_logs.txt')
+logs_path = os.path.join(output_dir_path, '更新日志.txt')
 
 
 # 更新所有合集 data.txt 数据库文件
 def update_all_db(album_url_dict):
+    print("################### 开始更新：数据库data.txt ###################")
     for album in album_url_dict.items():
         album_url = album[1]
-        print(f"\n----------- 正在更新 {album[0]} 合集数据库 -----------\n")
+        print(f"----------- 正在更新：{album[0]}合集 数据库 -----------")
         get_all_info(album_url, output_dir_path)
-    print("\n################# 所有数据库 data.txt 更新完成 #################\n")
+    print("################# 更新完成：所有数据库data.txt  #################")
 
 
 # # 下载所有合集所有文章
@@ -56,7 +57,7 @@ def down_update_album(album_url_dict, update_flg):
             # print(type(album_url))
             print(f"\n################### 开始下载 「{album_list[i][0]}合集」 ###################\n")
             wechat2pdf(album_url, output_dir_path)
-    print("\n####################### 所有合集增量下载完成 #######################\n")
+    print("\n####################### 所有合集增量下载完成 #######################")
 
 
 
@@ -81,8 +82,8 @@ if __name__ == "__main__":
         end_time = time.time()
         all_time = int(end_time - start_time)
 
-        print(f"\n本次共更新 {update_cnt} 篇文章！")
-        print(f"\n总耗时：{all_time}秒")
+        print(f"\n本次更新状态：\n本次共更新 {update_cnt} 篇文章！")
+        print(f"总耗时：{all_time}秒")
     else:
-        print("\n!!!!!!!!!!!!!!!! 所有合集均未更新，本次无需下载 !!!!!!!!!!!!!!!!!\n")
+        print("\n本次更新状态：\n所有合集没有新文章，无需下载！")
 
