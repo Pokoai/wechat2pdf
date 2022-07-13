@@ -22,7 +22,7 @@ def get_first_msg_info(album_url, output_dir_path):
 
     res = requests.get(album_url, headers)
     res.raise_for_status()
-    soup = bs4.BeautifulSoup(res.text)
+    soup = bs4.BeautifulSoup(res.text, "html.parser")
 
     # 获取微信公众号名称
     wechat_name_elem = soup.select('.album__author-name')

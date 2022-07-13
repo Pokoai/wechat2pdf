@@ -15,6 +15,9 @@ def get_history_nums(logs_path):
     with open(logs_path, encoding='utf-8') as logs_f:
         logs_str = logs_f.read()
 
+        # 因为要将日志文件的写入模式由覆盖改为添加，所以会有多个匹配项，但是re.search好像只匹配第一个，那正好不用修改了
+        # 查资料所得：re.search()方法扫描整个字符串，并返回第一个成功的匹配。如果匹配失败，则返回None
+        # 这里总结下：re.search()只匹配第一个找到的，re.findall()匹配所有找到的并返回一个列表
         match1 = re.search(r'孟岩投资实证（2022）：共(\d+)篇，', logs_str)
         if match1:
             mengyan_num = int(match1.group(1))  # 孟岩投资实证（2022）文章数量
@@ -54,8 +57,6 @@ def get_update_status(output_dir_path, album_name_list, history_nums):
     # 2. 在日志文件中记录下所有信息：今天谁更新了，但是一天运行5次，我就得考虑如何去迭代这个通知信息，写代码有点麻烦；（以后有时间可以思考思考）
     # 3. 发挥日志文件的正常功能：即使用添加写入，而非覆盖写入。这就要改变 正则表达式从日志中提取最新文章数量的代码，打算每次在文件开头添加写入。代码不复杂；
     # 综上所述，采用第3种方案开搞。
-
-
 
     # 更新文章总数
     update_cnt = 0
@@ -97,12 +98,19 @@ def update_logs(logs, logs_path):
     current_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
     # 写入文件
-    with open(logs_path, 'w', encoding='utf-8') as f:
+    with open(logs_path, 'r+', encoding='utf-8') as f:
+        # 从文件头部插入
+        old = f.read()
+        f.seek(0)
+
         # 先写入今天日期
         f.write(current_time + '\n\n')
         # 再写入更新日志
         for log in logs:
             f.write(log + '\n')
+
+        # 写入原内容
+        f.write('\n' + old)
 
     # return update_flg, update_cnt  # 将更新标志位、更新总数继续传递下去
     print("\n################## 日志 update_logs 更新完成 ##################\n")
