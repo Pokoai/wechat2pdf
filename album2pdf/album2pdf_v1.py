@@ -105,48 +105,48 @@ def replace_html_tags(html):
 
 # 终端实时输出转换信息
 def print_info(pdf_title, msg_path):
-    print('#' * 100)
+    print('/' * 100)
     if 'img' in msg_path:
         print("Img文章已生成！")
     else:
         print("文章已生成！")
     print("标题：" + pdf_title)
     print("地址：" + msg_path)
-    print('#' * 100)
+    print('/' * 100)
     # print('\n')
 
 
-# 查询文章更新状态（简易版），如果未更新则不执行转pdf程序
-# 首先在存储pdf文档的文件夹下手动新建一个文档cnt.txt，内容为空
-def notice_new_title(title_num, output_dir_path):
-    """
-    仅支持单项操作，如只删除了，或只更新了
-    如果既删除又更新了，该函数会出错
-    因为该函数思想是：将当前合集内文章数量与上次执行该函数保存的数量进行对比，来通知文章更新状态
-    升级版其实也简单，只要从文章发布时间或者文章链接入手即可
-    """
-    file_path = os.path.join(output_dir_path, 'cnt.txt')
-    mkfile(file_path)
-
-    with open(file_path, 'r+', encoding='utf-8') as f:
-        # 先读取文件, 将文件指针指向开始，并使用truncate()清除所有内容
-        cnt = f.read()
-        f.seek(0)
-        f.truncate()
-
-        if cnt == '':
-            cnt = 0
-        cnt = int(cnt)
-        if title_num > cnt:
-            print("## 最近更新了 %d 篇文章，敬请享用~~~" % (title_num-cnt))
-        elif title_num == cnt:
-            print("## 未更新文章，走吧。。。")
-        else:
-            print("## 竟然删除了 %d 篇文章，有啥不可告人的秘密？？？" % (cnt-title_num))
-
-        # 更新 cnt
-        f.write(str(title_num))
-        f.seek(0)
+# # 查询文章更新状态（简易版），如果未更新则不执行转pdf程序
+# # 首先在存储pdf文档的文件夹下手动新建一个文档cnt.txt，内容为空
+# def notice_new_title(title_num, output_dir_path):
+#     """
+#     仅支持单项操作，如只删除了，或只更新了
+#     如果既删除又更新了，该函数会出错
+#     因为该函数思想是：将当前合集内文章数量与上次执行该函数保存的数量进行对比，来通知文章更新状态
+#     升级版其实也简单，只要从文章发布时间或者文章链接入手即可
+#     """
+#     file_path = os.path.join(output_dir_path, 'cnt.txt')
+#     mkfile(file_path)
+#
+#     with open(file_path, 'r+', encoding='utf-8') as f:
+#         # 先读取文件, 将文件指针指向开始，并使用truncate()清除所有内容
+#         cnt = f.read()
+#         f.seek(0)
+#         f.truncate()
+#
+#         if cnt == '':
+#             cnt = 0
+#         cnt = int(cnt)
+#         if title_num > cnt:
+#             print("## 最近更新了 %d 篇文章，敬请享用~~~" % (title_num-cnt))
+#         elif title_num == cnt:
+#             print("## 未更新文章，走吧。。。")
+#         else:
+#             print("## 竟然删除了 %d 篇文章，有啥不可告人的秘密？？？" % (cnt-title_num))
+#
+#         # 更新 cnt
+#         f.write(str(title_num))
+#         f.seek(0)
 
 
 # 根据数据库文件 data.txt 中提供的 所有链接，生成pdf

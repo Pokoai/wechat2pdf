@@ -1,11 +1,12 @@
 #! python
 # run_daily.py - 每天遍历合集列表，然后自动下载最新文章
 
-import re, time
+import re, time, os
 
 from album2pdf_v1 import wechat2pdf
 from find_all_links import get_first_msg_info
-from update_logs import write_to_logs
+from find_all_links import get_all_info
+from update_logs import get_history_nums, get_update_status, update_logs
 
 
 # 自己感兴趣的合集链接
@@ -15,48 +16,73 @@ album_url_dict = {
     '孟岩投资实证（2022）': "https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIzNTQ4ODg4OA==&action=getalbum&album_id=2206783352551063553&scene=173&from_msgid=2247487451&from_itemidx=1&count=3&nolastread=1#wechat_redirect",
 
 }
-
 # 合集名称数据
 album_name_list = list(album_url_dict.keys())
-
 # 最外层文件夹地址
-dir_path = "D:\Media\Desktop\wechat2pdf"
+output_dir_path = "D:\Media\Desktop\wechat2pdf"
+# 日志路径
+logs_path = os.path.join(output_dir_path, 'update_logs.txt')
 
 
-
-# 下载所有合集
-def down_all_album():
-    output_dir_path = "D:\Media\Desktop\wechat2pdf"  # 指定主文件夹路径，不指定则为默认路径
-
+# 更新所有合集 data.txt 数据库文件
+def update_all_db(album_url_dict):
     for album in album_url_dict.items():
         album_url = album[1]
-        album_id = re.search(r'album_id=(\d+)&', album_url).group(1)  # 通过链接提取合集id
-        # print(f'\nalbum_id：{album_id}\n')
-
-        print(f"\n--------- 开始下载 {album[0]} ---------\n")
-        wechat2pdf(album_url, output_dir_path)
+        print(f"\n----------- 正在更新 {album[0]} 合集数据库 -----------\n")
+        get_all_info(album_url, output_dir_path)
+    print("\n################# 所有数据库 data.txt 更新完成 #################\n")
 
 
-# 仅下载最新的一篇文章
-# 因为公众号每天只能发布一篇文章，所以只要运行一次 down_all_album，以后每天运行 down_new_post 即可保持文章同步更新
-# def down_new_post():
+# # 下载所有合集所有文章
+# def down_all_album():
+#     for album in album_url_dict.items():
+#         album_url = album[1]
+#         # album_id = re.search(r'album_id=(\d+)&', album_url).group(1)  # 通过链接提取合集id
+#         # print(f'\nalbum_id：{album_id}\n')
+#         print(f"\n################### 开始下载 「{album[0]}合集」 ###################\n")
+#         wechat2pdf(album_url, output_dir_path)
+#     print("\n####################### 所有合集增量下载完成 #######################\n")
+
+
+# 仅下载已更新的合集的最新文章
+# 因为公众号每天只能发布一篇文章，所以只要运行一次 down_all_album，以后每天运行 down_update_album 即可保持文章同步更新
+def down_update_album(album_url_dict, update_flg):
+    album_list = list(album_url_dict.items())
+    # print(type(album_list))
+
+    for i in range(len(update_flg)):
+        if update_flg[i] == 1:  # 标志位为1才启动下载，否则跳过
+            album_url = album_list[i][1]
+            # print(type(album_url))
+            print(f"\n################### 开始下载 「{album_list[i][0]}合集」 ###################\n")
+            wechat2pdf(album_url, output_dir_path)
+    print("\n####################### 所有合集增量下载完成 #######################\n")
 
 
 
 if __name__ == "__main__":
     start_time = time.time()
 
-    # 开始下载
-    down_all_album()
+    # 1. 找到合集所有链接，更新所有合集 data.txt 数据库文件
+    update_all_db(album_url_dict)
 
-    end_time = time.time()
-    all_time = int(end_time - start_time)
+    # 2. 读取日志文件，与各合集数据库文件对比，获取更新状态
+    logs, update_flg, update_cnt = get_update_status(
+        output_dir_path, album_name_list, get_history_nums(logs_path))
+    # print(update_flg)
 
-    # print(f"\n本次共生成 {msg_num} 篇文章！")
-    print(f"\n总耗时：{all_time}秒")
+    # 3. 更新日志 update_logs.txt 文件
+    update_logs(logs, logs_path)
 
-    # 更新日志
-    write_to_logs(dir_path, album_name_list)
-    print("\n日志更新完成，请查收~\n")
+    # 4. 增量下载文章，但时如果所有合集均未发布新文章，则不用下载
+    if 1 in update_flg:
+        down_update_album(album_url_dict, update_flg)
 
-    # print("\nDone!")
+        end_time = time.time()
+        all_time = int(end_time - start_time)
+
+        print(f"\n本次共更新 {update_cnt} 篇文章！")
+        print(f"\n总耗时：{all_time}秒")
+    else:
+        print("\n!!!!!!!!!!!!!!!! 所有合集均未更新，本次无需下载 !!!!!!!!!!!!!!!!!\n")
+

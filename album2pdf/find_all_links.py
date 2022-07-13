@@ -203,4 +203,4 @@ if __name__ == "__main__":
 
     get_all_info(album_url, output_dir_path)
 
-    # print("Done!")
+    # print("所有链接更新完成!")

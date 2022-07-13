@@ -1,13 +1,13 @@
 #! python
-# update_logs.py - 自动生成更新日志文档 update_logs.txt
+# get_update_status.py - 自动生成更新日志文档 get_update_status.txt
 
 import os, re, time
 
 from album2pdf_v1 import mkfile
 
 
-# 读取日志内容，获取各合集文章历史数量
-def read_logs(logs_path):
+# 读取日志文件，获取各合集文章历史数量
+def get_history_nums(logs_path):
     # 若文件不存在即创建
     mkfile(logs_path)
 
@@ -36,31 +36,34 @@ def read_logs(logs_path):
     return ediary_num, efache_num, mengyan_num
 
 
-# 更新日志内容
-def update_logs(dir_path, album_name_list):
-    logs = []  # 暂存日志字符串到该列表中
+# 读取各合集数据库文件，与日志文件对比，获取更新状态
+def get_update_status(output_dir_path, album_name_list, history_nums):
+    logs = []  # 暂存新日志字符串到该列表中
     # print(len(album_name_list))
-    # 日志文件地址
-    logs_path = os.path.join(dir_path, 'update_logs.txt')
-    # 文件历史数量
-    history_nums = read_logs(logs_path)
-    # print(history_nums)
 
-    for i in range(len(album_name_list)):
+    # 合集数量
+    album_num = len(album_name_list)
+    # 合集更新标志位，默认未更新为0
+    update_flg = [0 for i in range(album_num)]
+    # 更新文章总数
+    update_cnt = 0
+
+    for i in range(album_num):
         # 合集数据库地址
-        db_path = os.path.join(dir_path, album_name_list[i], 'data.txt')
-
+        db_path = os.path.join(output_dir_path, album_name_list[i], 'data.txt')
         with open(db_path, encoding='utf-8') as f:
             data_str = f.readline()
+
             # 获取第一个序列号，即文章最新数量
             max_num = int(re.search(r'序列：(\d+)\s', data_str).group(1))
-
-            # 最新数量与历史数量之差
-            update_num = max_num - history_nums[i]
+            # 最新数量与历史数量之差即为更新数量
+            update_num = max_num - history_nums[i]  # 这里需要i
 
             # 判断更新状态
             if update_num > 0:
                 update_str = '，更新 ' + str(update_num) + ' 篇\n'
+                update_flg[i] = 1  # 有文章更新，标志位置1
+                update_cnt += update_num
             elif update_num == 0:
                 update_str = '，未更新\n'
             else:
@@ -72,18 +75,12 @@ def update_logs(dir_path, album_name_list):
             logs.append(log_new_str)
     # print(logs)
 
-    return logs  # return的缩进位置要注意，应放在for外面，否则一次循环就跳出了
+    # return的缩进位置要注意，应放在for外面，否则一次循环就结束了
+    return logs, update_flg, update_cnt
 
 
-# 将新的日志内容写入日志文件
-def write_to_logs(dir_path, album_name_list):
-    # 日志文件地址
-    logs_path = os.path.join(dir_path, 'update_logs.txt')
-
-    # 获取要更新的内容
-    logs = update_logs(dir_path, album_name_list)
-    # print(logs)
-
+# 将更新状态写入日志文件中
+def update_logs(logs, logs_path):
     # 获取当前时间
     current_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
@@ -94,7 +91,10 @@ def write_to_logs(dir_path, album_name_list):
         # 再写入更新日志
         for log in logs:
             f.write(log + '\n')
-            # print("谢谢谢\n")
+
+    # return update_flg, update_cnt  # 将更新标志位、更新总数继续传递下去
+    print("\n################## 日志 update_logs 更新完成 ##################\n")
+
 
 
 if __name__ == "__main__":
@@ -107,8 +107,11 @@ if __name__ == "__main__":
     # 合集名称数据
     album_name_list = list(album_url_dict.keys())
     # 最外层文件夹地址
-    dir_path = "D:\Media\Desktop\wechat2pdf"
+    output_dir_path = "D:\Media\Desktop\wechat2pdf"
 
-    write_to_logs(dir_path, album_name_list)
+    logs_path = os.path.join(output_dir_path, 'update_logs.txt')
+    history_nums = get_history_nums(logs_path)
+    logs = get_update_status(output_dir_path, album_name_list, history_nums)
+    update_logs(logs, logs_path)
 
     print("日志更新完成!")
