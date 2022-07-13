@@ -82,8 +82,9 @@ if __name__ == "__main__":
         end_time = time.time()
         all_time = int(end_time - start_time)
 
-        print(f"\n本次更新状态：\n本次共更新 {update_cnt} 篇文章！")
+        print(f"\n本次更新状态：\n共更新 {update_cnt} 篇文章！")
         print(f"总耗时：{all_time}秒")
+        print(f"敬请阅读！")
     else:
         print("\n本次更新状态：\n所有合集没有新文章，无需下载！")
 
