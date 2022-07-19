@@ -99,7 +99,7 @@ def get_first_post_info(album_url, album_post_nums):
 
 
 
-# 设置合集文件夹路径、数据库文件路径
+# 设置合集文件夹路径、数据库文件路径，并新建文件夹和文件
 def set_album_db_path(album_name, output_path):
     """
     :param album_name: 合集名称
@@ -263,6 +263,7 @@ def update_db(album_url, output_path):
         # 再将剩余文章信息写入数据库文件data.txt
         get_rest_post_info(first_post_id, album_id, _biz, album_post_nums, db_path)
 
+    return album_path, db_path
 
 
 if __name__ == "__main__":
