@@ -65,7 +65,7 @@ publishTime = timestamp_convert_localdate(timestamp)
 pdfTitle = wechatName + '-' + publishTime + '-' + title
 
 # 设置文章存储路径
-desktop_path = "D:\Media\Desktop\wechat2pdf"
+desktop_path = "D:\Media\Desktop\wechat2pdf\其他"
 output_path = os.path.join(desktop_path, pdfTitle + '.pdf')
 output_path2 = os.path.join(desktop_path, pdfTitle + '(img).pdf')
 
