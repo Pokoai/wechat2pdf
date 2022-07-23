@@ -7,6 +7,7 @@ from album2pdf_v1 import wechat2pdf
 from find_all_links import get_first_post_info
 from find_all_links import update_db
 from update_logs import read_logs, get_update_status, update_logs
+from mail import send_email
 
 
 ######################## 需要自己提供的 ############################################
@@ -83,6 +84,10 @@ def run_daily():
     else:
         print("\n本次更新状态：\n所有合集没有新文章，无需下载！")
 
+    # 4. 发送邮件
+    # send_email()
+    # 运行该程序时新生成的日志数据无法读取到，猜测是只有程序运行完才会将更新内容从缓存区写入文件中，
+    # 暂时只能采取折中方案：将send_email作为另一个进程运行。
 
 
 if __name__ == "__main__":
