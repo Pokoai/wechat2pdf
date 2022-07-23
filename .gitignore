@@ -1,6 +1,7 @@
 email.py
 email_template.py
 email*.py
+mail.py
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/pycharm,python
