@@ -69,7 +69,7 @@ def run_daily():
     update_all_db(album_dict)
 
     # 2. 更新日志文件，并获取更新标志位、更新文章数量
-    update_flg, update_cnt = update_logs(logs_path, output_path, album_name_list)
+    update_flg, update_cnt, logs = update_logs(logs_path, output_path, album_name_list)
 
     # 3. 增量下载文章，如果所有合集均未发布新文章，则不用下载
     if 1 in update_flg:
@@ -85,17 +85,18 @@ def run_daily():
         print("\n本次更新状态：\n所有合集没有新文章，无需下载！")
 
     # 4. 有更新则发送邮件通知
-    if update_cnt > 0:  # 该执行代码块可以合并到上面去，但是为了区分开功能，故又重复判断了一次是否有文中更新，只是换了一种方法：update_cnt > 0
-        print("\n####################### 正在发送邮件 #######################")
-        send_email()
-        print("\n###################### 邮件通知发送完成 #####################")
-    # send_email()
+    # if update_cnt > 0:  # 该执行代码块可以合并到上面去，但是为了区分开功能，故又重复判断了一次是否有文中更新，只是换了一种方法：update_cnt > 0
+    #     send_email(logs)
+
+    send_email(logs)
     # 运行该程序时新生成的日志数据无法读取到，猜测是只有程序运行完才会将更新内容从缓存区写入文件中，
     # 暂时只能采取折中方案：将send_email作为另一个进程运行。
 
     # 找到解决方案：https://blog.csdn.net/foreverhjhjhj/article/details/51658446
     # 经测试，上面方案无效
     # 最终通过 mail.py 读取日志文件时首先添加一句 f_log.seek(0) 解决问题
+    # 经测试，上面方案最终也无效。暂时不知道问题出在哪里
+    # 所以换一种方案，邮件内容不去读取日志文件，而是直接采用 update_logs.py 中 get_update_status函数产生的logs数组
 
 
 if __name__ == "__main__":
