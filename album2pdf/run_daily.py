@@ -85,10 +85,10 @@ def run_daily():
         print("\n本次更新状态：\n所有合集没有新文章，无需下载！")
 
     # 4. 有更新则发送邮件通知
-    # if update_cnt > 0:  # 该执行代码块可以合并到上面去，但是为了区分开功能，故又重复判断了一次是否有文中更新，只是换了一种方法：update_cnt > 0
-    #     send_email(logs)
+    if update_cnt > 0:  # 该执行代码块可以合并到上面去，但是为了区分开功能，故又重复判断了一次是否有文中更新，只是换了一种方法：update_cnt > 0
+        send_email(logs)
 
-    send_email(logs)
+    # send_email(logs)
     # 运行该程序时新生成的日志数据无法读取到，猜测是只有程序运行完才会将更新内容从缓存区写入文件中，
     # 暂时只能采取折中方案：将send_email作为另一个进程运行。
 
