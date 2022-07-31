@@ -113,11 +113,14 @@ def update_logs(logs_path, output_path, album_name_list):
 
         # 先写入今天日期
         f.write(current_time + '\n\n')
+        f.flush()
         # 再写入更新日志
         for log in logs:
             f.write(log + '\n')
+            f.flush()
         # 写入原内容
         f.write('\n' + old)
+        f.flush()
     print("\n##################### 完成更新：日志文件 #####################")
 
     return update_flg, update_cnt  # 将更新标志位、更新总数传递下去
