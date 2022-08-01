@@ -65,7 +65,10 @@ def get_update_status(output_path, album_name_list, history_nums):
         # 数据库地址
         db_path = os.path.join(output_path, album_name_list[i], 'data.txt')
         with open(db_path, encoding='utf-8') as f:
-            db_str = f.readline()
+            # 读取前两行，包含最新文章的序列号和标题
+            db_str = ''
+            for j in range(2):
+                db_str += f.readline()
 
             # 获取第一个序列号，即文章最新数量
             album_post_nums = int(re.search(r'序列：(\d+)\s', db_str).group(1))
@@ -74,9 +77,10 @@ def get_update_status(output_path, album_name_list, history_nums):
 
             # 判断更新状态
             if update_num > 0:
-                update_str = '，更新 ' + str(update_num) + ' 篇\n'
                 update_flg[i] = 1  # 有文章更新，标志位置1
                 update_cnt += update_num
+                new_post_title = re.search(r'文章标题：(.+)\s', db_str).group(1)
+                update_str = '，更新 ' + str(update_num) + ' 篇\n' + '更新文章：' + new_post_title + '\n'
             elif update_num == 0:
                 update_str = '，未更新\n'
             else:
