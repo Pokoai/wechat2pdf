@@ -8,6 +8,7 @@ from find_all_links import get_first_post_info
 from find_all_links import update_db
 from update_logs import read_logs, get_update_status, update_logs
 from mail import send_email
+from wechat_notice import wechat_group_notice
 
 
 ######################## 需要自己提供的 ############################################
@@ -88,6 +89,9 @@ def run_daily():
     if update_cnt > 0:  # 该执行代码块可以合并到上面去，但是为了区分开功能，故又重复判断了一次是否有文中更新，只是换了一种方法：update_cnt > 0
         send_email(logs)
 
+        wechat_group_notice(logs)
+
+    wechat_group_notice(logs)
     # send_email(logs)
     # 运行该程序时新生成的日志数据无法读取到，猜测是只有程序运行完才会将更新内容从缓存区写入文件中，
     # 暂时只能采取折中方案：将send_email作为另一个进程运行。
