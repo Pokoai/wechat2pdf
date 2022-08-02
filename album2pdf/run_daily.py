@@ -90,6 +90,7 @@ def run_daily():
         send_email(logs)
 
         wechat_group_notice(logs)  # 微信群通知
+        print("\n微信群通知发送成功！")
 
     # wechat_group_notice(logs)
     # send_email(logs)
