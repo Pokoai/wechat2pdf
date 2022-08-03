@@ -199,37 +199,50 @@ def get_rest_post_info(first_post_id, album_id, _biz, album_post_nums, db_path):
         # 解析返回的 json数据
         album_resp = data_json.get('getalbum_resp')
         post_list = album_resp.get('article_list')
-        for dic in post_list:
-            title = dic['title']    # 文章标题
-            link = dic['url']       # 文章链接
-            publish_time = dic['create_time']  # 文章发布时间
-            post_id = dic['msgid']  # 文章id
+        # print(post_list)
+        # 一共就两篇文章时，以第一篇id为起点去爬取，返回的就只要一篇文章信息，那么post_list是一个单层字典
+        if (1 == post_max_num):
+            post_num = str(post_max_num)  # 文章序列号
+            title = post_list['title']  # 文章标题
+            link = post_list['url']  # 文章链接
+            publish_time = post_list['create_time']  # 文章发布时间
+            post_id = post_list['msgid']  # 文章id
 
-            # 有的合集文章没有设置 pos_num 属性，爬取不到，故需要自己设置
-            if 'pos_num' in dic:
-                post_num = dic['pos_num']
-            else:
-                post_num = str(post_max_num)
-                post_max_num -= 1
-
-            post_cnt += 1  # 更新 post_cnt
             # 将文章信息写入 data.txt 数据库
             write2db(db_path, 0, post_num, title, publish_time, link, post_id)
-        get_post_nums += post_cnt  # 更新 get_post_nums
-
-        # 如果本次最后一篇文章的 post_num 为 1 则跳出循环
-        # if int(post_list[post_cnt-1]['pos_num']) == 1:
-        # 该退出循环条件有问题，因为某些合集 pos_num 为空
-
-        # 现换为 get_post_nums == album_post_nums 作为退出条件，
-        # 即爬取获得的文章数量等于该合集文章数量（已知），则说明已经全部爬取完了，那么就结束
-        if get_post_nums == album_post_nums:
             break
+        else:  # 多于2篇文章
+            for dic in post_list:
+                title = dic['title']    # 文章标题
+                link = dic['url']       # 文章链接
+                publish_time = dic['create_time']  # 文章发布时间
+                post_id = dic['msgid']  # 文章id
 
-        # 每次响应最多只返回20篇文章的信息，所以要找到本次响应的最后一篇文章，
-        # 以它的id作为下一次起始id
-        begin_id = post_list[post_cnt-1]['msgid']  # 更新 begin_id
-        post_cnt = 0  # post_cnt 需要清零，为下次循环准备
+                # 有的合集文章没有设置 pos_num 属性，爬取不到，故需要自己设置
+                if 'pos_num' in dic:
+                    post_num = dic['pos_num']
+                else:
+                    post_num = str(post_max_num)
+                    post_max_num -= 1
+
+                post_cnt += 1  # 更新 post_cnt
+                # 将文章信息写入 data.txt 数据库
+                write2db(db_path, 0, post_num, title, publish_time, link, post_id)
+            get_post_nums += post_cnt  # 更新 get_post_nums
+
+            # 如果本次最后一篇文章的 post_num 为 1 则跳出循环
+            # if int(post_list[post_cnt-1]['pos_num']) == 1:
+            # 该退出循环条件有问题，因为某些合集 pos_num 为空
+
+            # 现换为 get_post_nums == album_post_nums 作为退出条件，
+            # 即爬取获得的文章数量等于该合集文章数量（已知），则说明已经全部爬取完了，那么就结束
+            if get_post_nums == album_post_nums:
+                break
+
+            # 每次响应最多只返回20篇文章的信息，所以要找到本次响应的最后一篇文章，
+            # 以它的id作为下一次起始id
+            begin_id = post_list[post_cnt-1]['msgid']  # 更新 begin_id
+            post_cnt = 0  # post_cnt 需要清零，为下次循环准备
 
 
 
@@ -256,9 +269,11 @@ def update_db(album_url, output_path):
     # 先将第一篇文章信息写入数据库文件data.txt
     post_num, title, link, publish_time, first_post_id = \
         get_first_post_info(album_url, album_post_nums)
+    # print(db_path + '\n' + str(post_num) + '\n' +  title + '\n'  + str(publish_time)  + '\n'  + link + '\n' + first_post_id)
     write2db(db_path, 1, post_num, title, publish_time, link, first_post_id)
 
     # 如果合集只有一篇文章，则不用执行 get_rest_info()
+    # print(album_post_nums)
     if album_post_nums > 1:
         # 再将剩余文章信息写入数据库文件data.txt
         get_rest_post_info(first_post_id, album_id, _biz, album_post_nums, db_path)
@@ -267,8 +282,8 @@ def update_db(album_url, output_path):
 
 
 if __name__ == "__main__":
-    album_url = "https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIwMTIzNDMwNA==&action=getalbum&album_id=2461687967875416065&scene=173&from_msgid=2653411356&from_itemidx=1&count=3&nolastread=1#wechat_redirect"
-    output_path = "D:\Media\Desktop\w2pdf"
+    album_url = "https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIwMTIzNDMwNA==&action=getalbum&album_id=2467166481575985152&scene=173&from_msgid=2653411345&from_itemidx=1&count=3&nolastread=1#wechat_redirect"
+    output_path = "D:\Media\Desktop\wechat2pdf"
 
     update_db(album_url, output_path)
 
