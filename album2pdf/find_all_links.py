@@ -201,8 +201,9 @@ def get_rest_post_info(first_post_id, album_id, _biz, album_post_nums, db_path):
         post_list = album_resp.get('article_list')
         # print(post_list)
         # 一共就两篇文章时，以第一篇id为起点去爬取，返回的就只要一篇文章信息，那么post_list是一个单层字典
-        if (1 == post_max_num):
-            post_num = str(post_max_num)  # 文章序列号
+        # if (  1 == post_max_num ):
+        if ( 1 == album_post_nums - get_post_nums ):  # 前面的if只能解决只有2篇文章的情况，而对于22篇情况需要此if条件
+            post_num = 1  # 文章序列号
             title = post_list['title']  # 文章标题
             link = post_list['url']  # 文章链接
             publish_time = post_list['create_time']  # 文章发布时间
@@ -282,7 +283,7 @@ def update_db(album_url, output_path):
 
 
 if __name__ == "__main__":
-    album_url = "https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIwMTIzNDMwNA==&action=getalbum&album_id=2467166481575985152&scene=173&from_msgid=2653411345&from_itemidx=1&count=3&nolastread=1#wechat_redirect"
+    album_url = "https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzIwMTIzNDMwNA==&action=getalbum&album_id=2461687967875416065&scene=173&from_msgid=2653411356&from_itemidx=1&count=3&nolastread=1#wechat_redirect"
     output_path = "D:\Media\Desktop\wechat2pdf"
 
     update_db(album_url, output_path)
