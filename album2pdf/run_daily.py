@@ -23,7 +23,7 @@ album_dict = {
 # 合集名称数据
 album_name_list = list(album_dict.keys())
 # 最外层文件夹地址
-output_path = "D:\Media\Desktop\wechat2pdf"
+output_path = "D:\\Media\\Desktop\\wechat2pdf"
 # 日志路径
 logs_path = os.path.join(output_path, '更新日志.txt')
 #################################################################################
@@ -90,7 +90,7 @@ def run_daily():
     if update_cnt > 0:  # 该执行代码块可以合并到上面去，但是为了区分开功能，故又重复判断了一次是否有文中更新，只是换了一种方法：update_cnt > 0
         # send_email(logs)
 
-        # wechat_group_notice(logs)  # 微信群通知
+        wechat_group_notice(logs)  # 微信群通知
         print("\n微信群通知发送成功！")
 
         upload()
