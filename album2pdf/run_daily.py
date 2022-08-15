@@ -9,6 +9,7 @@ from find_all_links import update_db
 from update_logs import read_logs, get_update_status, update_logs
 from mail import send_email
 from wechat_notice import wechat_group_notice
+from auto_upload2aliyun import upload
 
 
 ######################## 需要自己提供的 ############################################
@@ -85,12 +86,15 @@ def run_daily():
     else:
         print("\n本次更新状态：\n所有合集没有新文章，无需下载！")
 
-    # 4. 有更新则发送邮件通知
+    # 4. 有更新则发送通知以及将新文件自动同步到阿里云盘
     if update_cnt > 0:  # 该执行代码块可以合并到上面去，但是为了区分开功能，故又重复判断了一次是否有文中更新，只是换了一种方法：update_cnt > 0
-        send_email(logs)
+        # send_email(logs)
 
-        wechat_group_notice(logs)  # 微信群通知
+        # wechat_group_notice(logs)  # 微信群通知
         print("\n微信群通知发送成功！")
+
+        upload()
+        print("\n文件成功上传至阿里云盘！") 
 
     # wechat_group_notice(logs)
     # send_email(logs)
