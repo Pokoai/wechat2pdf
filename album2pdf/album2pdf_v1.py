@@ -202,9 +202,11 @@ def wechat2pdf(album_url, output_path, flg=0):
     # print(type(pdf_title_list))
 
     # 开始转换为pdf
+    path_wk = 'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe' # 安装位置
+    config = pdfkit.configuration(wkhtmltopdf = path_wk)
     for i in range(post_nums):
         # 利用pdfkit生成无图片版pdf
-        pdfkit.from_url(link_list[i], pdf_path_list[i])
+        pdfkit.from_url(link_list[i], pdf_path_list[i], configuration=config)
         print_info(pdf_title_list[i], pdf_path_list[i])
 
         # 利用pdfkit生成带图片版pdf
@@ -212,7 +214,7 @@ def wechat2pdf(album_url, output_path, flg=0):
         res.raise_for_status()
         cnt_html = replace_html_tags(res.text)  # 转换html
         try:
-            pdfkit.from_string(cnt_html, pdf_path_img_list[i], options=PDF_OPTIONS)
+            pdfkit.from_string(cnt_html, pdf_path_img_list[i], options=PDF_OPTIONS, configuration=config)
         except IOError:
             pass
         print_info(pdf_title_list[i], pdf_path_img_list[i])
