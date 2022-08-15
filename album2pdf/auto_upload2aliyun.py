@@ -3,6 +3,7 @@
 
 # 暂时每次有新文章时所有文件夹都同步一遍，后面再优化为单独同步，
 # 主要为了减少 get_folder_by_path() 运行次数
+# 更好的方法是，第一次运行 get_folder_by_path() 后取得 file_id, 以后就不用再去获取了
 
 
 from aligo import Aligo
@@ -16,12 +17,13 @@ if __name__ == '__main__':
     remote_folder1 = ali.get_folder_by_path('/公众号&微博文章/E大公号/日记')
     remote_folder2 = ali.get_folder_by_path('/公众号&微博文章/E大公号/长赢指数投资计划')
     remote_folder3 = ali.get_folder_by_path('/公众号&微博文章/孟岩公号/孟岩投资实证（2022）')
+    print(remote_folder1.file_id + '\n' + remote_folder2.file_id+ '\n' + remote_folder3.file_id)
     
 
     # 同步文件夹，本地为主
-    ali.sync_folder('D:\\Media\\Desktop\\wechat2pdf\\日记', remote_folder1.file_id, True)
-    ali.sync_folder('D:\\Media\\Desktop\\wechat2pdf\\长赢指数投资计划', remote_folder2.file_id, True)
-    ali.sync_folder('D:\\Media\\Desktop\\wechat2pdf\\孟岩投资实证（2022）', remote_folder3.file_id, True)
+    # ali.sync_folder('D:\\Media\\Desktop\\wechat2pdf\\日记', remote_folder1.file_id, True)
+    # ali.sync_folder('D:\\Media\\Desktop\\wechat2pdf\\长赢指数投资计划', remote_folder2.file_id, True)
+    # ali.sync_folder('D:\\Media\\Desktop\\wechat2pdf\\孟岩投资实证（2022）', remote_folder3.file_id, True)
 
 
     
